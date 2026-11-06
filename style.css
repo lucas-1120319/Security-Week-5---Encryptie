@@ -1,0 +1,4 @@
+body { font-family: sans-serif; margin: 20px; }
+.box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+.hidden { display: none; }
+#inbox-item { background: #e0f7fa; padding: 10px; cursor: pointer; border-radius: 4px; display: inline-block; }
