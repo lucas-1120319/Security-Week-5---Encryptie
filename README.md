@@ -1,30 +1,25 @@
-Er is gekozen om de applicatie te maken in Javascript omdat ik hier niet  heel vaak in kan programmeeren en ik vind het wel een leuke taal. Ik wil bij deze opdracht er ook een visuele voorkant bij maken, dus kan dat direct in html/ css met javascript.
+Gebruikte Technologieën & Keuzes
 
+HTML, CSS & JavaScript: Ik heb gekozen om de applicatie in JavaScript te maken omdat ik hier niet heel vaak in programmeer en het een leuke taal vind. Ik wilde bij deze opdracht direct een visuele voorkant maken, dus dat kon mooi direct in HTML/CSS met JavaScript.
 
-Ik heb gekozen om Web Crypto API en subtle crypto te gebruiken. 
-Dit doe ik omdat het een simpele symmetrische encryptie is die gebruikt maakt van een ingebouwde algoritme in de browser.
+Web Crypto API: Ik heb gekozen om de ingebouwde Web Crypto API (window.crypto.subtle) van de browser te gebruiken. Dit sluit aan bij het principe "Don't roll your own crypto", omdat je gebruikmaakt van een goed geteste en veilige library in plaats van zelf een algoritme te bedenken.
 
-ik kies voor AES-GCM omdat er in de documentatie word aangegeven dat er een ingebouwde authenticatie in zit om te kijken of het bericht niet veranderd is door iemand anders.
-https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
+AES-GCM (256-bit): Ik kies voor AES-GCM omdat er in de documentatie wordt aangegeven dat er een ingebouwde authenticatiecontrole in zit. Hierdoor kan de app meteen kijken of het bericht niet veranderd is door iemand anders of dat er een verkeerd wachtwoord is ingevuld.
 
+Hoe de applicatie te starten
+Kloon of download deze GitHub repository naar je eigen computer.
+Open het bestand index.html direct in je browser (zoals Chrome, Edge of Firefox).
+Er is geen ingewikkelde server of npm installatie nodig, alles draait lokaal in de browser.
+ Korte uitleg Sleutelbeheer
 
+Omdat de app lokaal in de browser draait zonder server, is gekozen voor wachtwoord-gebaseerd sleutelbeheer:
 
-## Sleutelbeheer
-In een ideale cryptografische omgeving wordt symmetrische encryptie (zoals AES-256) uitgevoerd met volledig willekeurige sleutels. 
-Dit brengt echter het *sleuteldistributieprobleem* met zich mee: 
-hoe krijg je die geheime sleutel veilig bij de ontvanger zonder dat een aanvaller deze onderschept?
+Sleutel afleiden: Van het ingevulde wachtwoord wordt een basekey gemaakt. Met PBKDF2, SHA-256 en 100.000 iteraties wordt hier een cryptografische sleutel van gemaakt.
 
+Salt & IV: Er wordt een random salt en een IV (Initialization Vector van 12 bytes) gebruikt. De salt zorgt ervoor dat hetzelfde wachtwoord niet dezelfde sleutel geeft, en de IV voorkomt herhalingsaanvallen. De IV en salt hoeven niet geheim te zijn en worden meegegeven in het JSON-packet.
 
-### De oplossing in deze applicatie:
-Omdat deze webapp lokaal in de browser draait zonder complexe server-infrastructuur, is gekozen voor een **wachtwoord-gebaseerd sleutelbeheer**:
-- **Sleutelgeneratie via PBKDF2:** De gebruiker voert een zelfgekozen wachtwoord (passphrase) in. De Web Crypto API (`window.crypto.subtle.deriveKey`) zet dit wachtwoord om in een sterke AES-GCM cryptografische sleutel.
-- **Geen permanente opslag:** De sleutel wordt nergens opgeslagen in een database of op de harde schijf; deze bestaat tijdelijk in het geheugen van de browser tijdens het versleutelen of ontsleutelen.
-- **Uitwisseling:** Om een bericht te ontcijferen, moeten de verzender en ontvanger vooraf hetzelfde wachtwoord met elkaar afspreken (out-of-band, bijvoorbeeld via een beveiligd kanaal). De gegenereerde IV (Initialization Vector) wordt samen met de versleutelde data meegestuurd, aangezien een IV bij AES-GCM niet geheim hoeft te zijn.
+Opslag: De sleutel wordt nergens opgeslagen op de harde schijf of in een database, maar bestaat alleen tijdelijk in het geheugen tijdens het versleutelen of ontsleutelen
 
-### Beveiligingsimplicaties:
-De sterkte van de encryptie is direct afhankelijk van de sterkte van het gekozen wachtwoord. Een zwak wachtwoord maakt de applicatie vatbaar voor brute-force aanvallen. Het gebruik van PBKDF2 helpt hiertegen door het afleiden van de sleutel computationeel iets zwaarder te maken, wat brute-force pogingen vertraagt.
-
-https://share.gemini.google/0sRJboaggiV2 
 
 gebruikte bronnen:
 https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto
